@@ -70,7 +70,7 @@ function configFactory(options) {
       logLevel: config[options.logLevel],
 
       // enable / disable watching file and executing tests whenever any file changes
-      autoWatch: options.watch,
+      autoWatch: !!options.watch,
 
       // Start these browsers, currently available:
       // - Chrome
@@ -86,7 +86,7 @@ function configFactory(options) {
       captureTimeout: 20000,
 
       // Auto run tests on start (when browsers are captured) and exit
-      singleRun: options.watch,
+      singleRun: !!options.watch,
 
       // report which specs are slower than 500ms
       reportSlowerThan: 500
