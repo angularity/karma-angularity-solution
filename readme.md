@@ -56,7 +56,6 @@ Use the following dev-dependencies and scripts in your project.
 ```json
 "scripts": {
   "test": "cross-env MYPROJECT_NO_APP=true npm run build && karma start",
-  "watch-test": "cross-env MYPROJECT_KARMA_WATCH=true npm run test",
   "ci": "cross-env MYPROJECT_KARMA_REPORTER=teamcity npm run test"
 },
 "devDependencies": {
@@ -66,7 +65,7 @@ Use the following dev-dependencies and scripts in your project.
 
 Don't forget to change **`MYPROJECT`** prefix to the name of your project to avoid environment variable crosstalk.
 
-#### `karma.config.js`
+#### `karma.conf.js`
 
 Create a Karma configuration file that delegates to the `karma-angularity-solution` package. Use options taken from the same environment variables used in your `package.json` scripts.
 
@@ -89,15 +88,11 @@ For example:
 
 * run unit tests using `npm run test`
 
-* run unit tests using `npm run watch-test`
-
 * run with the TeamCity reporter using `npm run ci`
 
 ### Options
 
 * `port:int` Optional port (that overrides `angularity.json`)
-
-* `watch:boolean` Re-run tests when there is a new build
 
 * `reporter:string` Optional reporter name (defaults to `"spec"`)
 
