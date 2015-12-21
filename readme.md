@@ -56,8 +56,8 @@ Use the following dev-dependencies and scripts in your project.
 ```json
 "scripts": {
   "test": "cross-env MYPROJECT_NO_APP=true npm run build && karma start",
-  "watch-test": "cross-env MYPROJECT_KARMA_WATCH=true && npm run test",
-  "ci": "cross-env MYPROJECT_KARMA_REPORTER=teamcity && npm run test"
+  "watch-test": "cross-env MYPROJECT_KARMA_WATCH=true npm run test",
+  "ci": "cross-env MYPROJECT_KARMA_REPORTER=teamcity npm run test"
 },
 "devDependencies": {
   "karma-angularity-solution": "latest"
@@ -75,7 +75,6 @@ Create a Karma configuration file that delegates to the `karma-angularity-soluti
 
 module.exports = require('karma-angularity-solution')({
     port    : process.env.MYPROJECT_PORT ? (parseInt(process.env.MYPROJECT_PORT) + 1) : undefined,
-    watch   : process.env.MYPROJECT_KARMA_WATCH,
     reporter: process.env.MYPROJECT_KARMA_REPORTER,
     browser : process.env.MYPROJECT_KARMA_BROWSER,
     logLevel: process.env.MYPROJECT_KARMA_LOGLEVEL

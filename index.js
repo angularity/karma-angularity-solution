@@ -18,7 +18,6 @@ function configFactory(options) {
   // options set
   options = defaults(options, {
     port    : (angularityPort + 1) || 55556,
-    watch   : false,
     reporter: 'spec',
     browser : 'Chrome',
     logLevel: 'LOG_INFO'
@@ -70,7 +69,7 @@ function configFactory(options) {
       logLevel: config[options.logLevel],
 
       // enable / disable watching file and executing tests whenever any file changes
-      autoWatch: !!options.watch,
+      autoWatch: false,
 
       // Start these browsers, currently available:
       // - Chrome
@@ -86,7 +85,7 @@ function configFactory(options) {
       captureTimeout: 20000,
 
       // Auto run tests on start (when browsers are captured) and exit
-      singleRun: !!options.watch,
+      singleRun: true,
 
       // report which specs are slower than 500ms
       reportSlowerThan: 500
