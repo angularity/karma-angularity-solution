@@ -39,13 +39,31 @@ And additionally on Mac you may wish to set your default Node version:
 nvm alias default 4.0.0
 ```
 
-### Prerequisites
+Now install this package as a **local dev-dependency**.
+
+```
+npm install --save-dev karma-angularity-solution
+```
+
+### Co-requisites
 
 * Install [Karma](http://karma-runner.github.io/0.13/intro/installation.html) as a **global** package using NPM.
 
-* Install [cross-env](https://www.npmjs.com/package/cross-env) as a **global** package using NPM, to allow you to write environment variables.
+	```
+	npm install -g webpack
+	```
+
+* Install [cross-env](https://www.npmjs.com/package/cross-env) as a **global** package using NPM, to allow you to write environment variables from your [NPM scripts](https://docs.npmjs.com/misc/scripts).
+
+	```
+	npm install -g cross-env
+	```
 
 * Install [webpack-angularity-solution](https://github.com/angularity/webpack-angularity-solution) as a **local dev-dependency** in order to build the test bundle.
+
+	```
+	npm install --save-dev webpack-angularity-solution
+	```
 
 ### Each project
 
