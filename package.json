@@ -1,11 +1,11 @@
 {
   "name": "karma-angularity-solution",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Requisite configuration and modules to test Angularity projects with Karma",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bholloway/karma-angularity-solution.git"
+    "url": "git+https://github.com/angularity/karma-angularity-solution.git"
   },
   "keywords": [
     "webpack",
@@ -15,9 +15,9 @@
   "author": "bholloway",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/bholloway/karma-angularity-solution/issues"
+    "url": "https://github.com/angularity/karma-angularity-solution/issues"
   },
-  "homepage": "https://github.com/bholloway/karma-angularity-solution",
+  "homepage": "https://github.com/angularity/karma-angularity-solution",
   "dependencies": {
     "jasmine-core": "^2.4.1",
     "karma": "^0.13.15",
