@@ -34,8 +34,8 @@ function configFactory(options) {
       // list of files / patterns to load in the browser
       // angularity will package unit tests and append to the `files` array
       files: [
-        './app-build/assets/vendor.*.js',
-        './app-build/assets/test.*.js'
+        './app-build/vendor.*.js',
+        './app-build/test.*.js'
       ],
 
       // list of files to exclude
