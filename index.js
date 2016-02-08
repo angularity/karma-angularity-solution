@@ -9,19 +9,27 @@ var path = require('path'),
 
 var defaults = require('lodash.defaults');
 
+var defaultOptions = require('./lib/default-options'),
+    parseOptions   = require('./lib/parse-options');
+
+/**
+ * Create a Karma configuration function.
+ * @param {...object} [options] Any number of options hashes to be merged
+ * @returns {function(object)} A karma configuration function
+ */
 function configFactory(options) {
 
-  // where angularity.json is present it should define the port
+  // legacy support
+  //  where angularity.json is present it should define the port
   var angularityJsonPath = path.resolve('angularity.json'),
       angularityPort     = fs.existsSync(angularityJsonPath) && require(angularityJsonPath).port;
 
   // options set
-  options = defaults(options, {
-    port    : (angularityPort + 1) || 55556,
-    reporter: 'spec',
-    browser : 'Chrome',
-    logLevel: 'LOG_INFO'
-  });
+  var args = Array.prototype.slice.call(arguments),
+      opt  = parseOptions(
+        defaults.apply(null, [{}].concat(args)),                // merged options in
+        defaults({port: angularityPort + 1}, defaultOptions())  // merged defaults
+      );
 
   return function configuration(config) {
     config.set({
@@ -56,17 +64,17 @@ function configFactory(options) {
 
       // use dots reporter, as travis terminal does not support escaping sequences
       // possible values: 'dots', 'progress', 'junit', 'teamcity'
-      reporters: [options.reporter],
+      reporters: [].concat(opt.reporter),
 
       // web server port
-      port: options.port,
+      port: opt.port,
 
       // enable / disable colors in the output (reporters and logs)
       colors: true,
 
       // level of logging
       // possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
-      logLevel: config[options.logLevel],
+      logLevel: config[opt.logLevel],
 
       // enable / disable watching file and executing tests whenever any file changes
       autoWatch: false,
@@ -79,7 +87,7 @@ function configFactory(options) {
       // - Safari (only Mac)
       // - PhantomJS
       // - IE (only Windows)
-      browsers: [options.browser],
+      browsers: [].concat(opt.browser),
 
       // If browser does not capture in given timeout [ms], kill it
       captureTimeout: 20000,

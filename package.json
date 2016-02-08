@@ -1,6 +1,6 @@
 {
   "name": "karma-angularity-solution",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Requisite configuration and modules to test Angularity projects with Karma",
   "main": "index.js",
   "repository": {
@@ -26,6 +26,7 @@
     "karma-sourcemap-loader": "^0.3.6",
     "karma-spec-reporter": "0.0.23",
     "karma-teamcity-reporter": "^0.2.1",
-    "lodash.defaults": "^3.1.2"
+    "lodash.defaults": "^3.1.2",
+    "snake-case": "^1.1.2"
   }
 }

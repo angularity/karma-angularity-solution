@@ -1,6 +1,6 @@
-# Webpack Angularity Solution
+# Karma Angularity Solution
 
-Requisite configuration and modules to build Angularity projects with Webpack
+Requisite configuration and modules to test Angularity projects with Karma
 
 ## Angularity
 
@@ -11,14 +11,16 @@ This project is for use with the [Webpack](https://webpack.github.io/) implement
 ## Rationale
 
 The original [Browserify-Sass Angularity](https://github.com/angularity/node-angularity/) was a global installation that included the [Karma](https://www.npmjs.com/package/karma) unit testing framework. This is **not** the case with the new [Webpack](https://webpack.github.io/) implementation.
- 
+
 Use this package, along with the [Webpack Angularity](https://github.com/angularity/webpack-angularity-solution) implementation, to unit tests Angularity projects.
 
 ## Limitations
 
-* This package is **not** a global installation.
+* This package is **not** a global installation. You need to install as a development dependency in every single project you wish to build.
 
 * This package does **not** contain [Karma](http://karma-runner.github.io/), you will need to install separately (see below).
+
+* This package presumes [npm scripts](https://docs.npmjs.com/misc/scripts). If you want to run outside of scripts you will need some additional global installs (see below).
 
 * Favours [Teamcity](https://www.jetbrains.com/teamcity/) CI server, to the extent that it includes its reporter.
 
@@ -47,23 +49,13 @@ npm install --save-dev karma-angularity-solution
 
 ### Co-requisites
 
-* Install [Karma](http://karma-runner.github.io/0.13/intro/installation.html) as a **global** package using NPM.
+Install [webpack-angularity-solution](https://github.com/angularity/webpack-angularity-solution) as a **local dev-dependency** in order to build the test bundle.
 
-	```
-	npm install -g webpack
-	```
+```
+npm install --save-dev webpack-angularity-solution
+```
 
-* Install [cross-env](https://www.npmjs.com/package/cross-env) as a **global** package using NPM, to allow you to write environment variables from your [NPM scripts](https://docs.npmjs.com/misc/scripts).
-
-	```
-	npm install -g cross-env
-	```
-
-* Install [webpack-angularity-solution](https://github.com/angularity/webpack-angularity-solution) as a **local dev-dependency** in order to build the test bundle.
-
-	```
-	npm install --save-dev webpack-angularity-solution
-	```
+Note that you do **not** need any global installs if you only use [npm scripts](https://docs.npmjs.com/misc/scripts). But if you operate outside of npm scripts you will find that you are missing [Karma](http://karma-runner.github.io/0.13/intro/installation.html), and [cross-env](https://www.npmjs.com/package/cross-env) as global installs.
 
 ### Each project
 
@@ -72,16 +64,23 @@ npm install --save-dev karma-angularity-solution
 Use the following dev-dependencies and scripts in your project.
 
 ```json
-"scripts": {
-  "test": "cross-env MYPROJECT_NO_APP=true npm run build && karma start",
-  "ci": "cross-env MYPROJECT_KARMA_REPORTER=teamcity npm run test"
-},
-"devDependencies": {
-  "karma-angularity-solution": "latest"
+{
+  "scripts": {
+    "test": "cross-env MODE=test npm run build && karma start",
+    "ci": "cross-env KARMA_REPORTER=teamcity MODE=test npm run build && karma start"
+  },
+  "devDependencies": {
+    "webpack-angularity-solution": "latest"
+    "karma-angularity-solution": "latest"
+  }
 }
 ```
 
-Don't forget to change **`MYPROJECT`** prefix to the name of your project to avoid environment variable crosstalk.
+Some explanation:
+
+* **cross-env**
+
+	Any setting passed to `cross-env` corresponds to environment variables. By convention they are `UPPERCASE`. These environment variables are private to the executable that follows so you don't need to worry about name conflicts across different projects.
 
 #### `karma.conf.js`
 
@@ -90,13 +89,14 @@ Create a Karma configuration file that delegates to the `karma-angularity-soluti
 ```javascript
 /* global process:true */
 
-module.exports = require('karma-angularity-solution')({
-    port    : process.env.MYPROJECT_PORT ? (parseInt(process.env.MYPROJECT_PORT) + 1) : undefined,
-    reporter: process.env.MYPROJECT_KARMA_REPORTER,
-    browser : process.env.MYPROJECT_KARMA_BROWSER,
-    logLevel: process.env.MYPROJECT_KARMA_LOGLEVEL
-});
+module.exports = require('karma-angularity-solution')(process.env);
 ```
+
+Some explanation:
+
+* **Options by `process.env`**
+
+	This `process.env` may be passed in entirety. The solution will automatically convert any upper-case option `SOME_OPTION` to camel-case `someOption` and parse strings to the correct type. Note however that Array parsing is **not** supported.
 
 ## Usage
 
@@ -112,8 +112,8 @@ For example:
 
 * `port:int` Optional port (that overrides `angularity.json`)
 
-* `reporter:string` Optional reporter name (defaults to `"spec"`)
+* `reporter:string` Optional reporter name, or Array thereof (defaults to `"spec"`)
 
-* `browser:string` Optional browser (defaults to `"Chrome"`)
+* `browser:string` Optional browser, or Array thereof (defaults to `"Chrome"`)
 
 * `logLevel:string` Optional log-level (defaults to `"LOG_INFO"`)
