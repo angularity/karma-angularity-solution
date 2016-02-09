@@ -66,8 +66,8 @@ Use the following dev-dependencies and scripts in your project.
 ```json
 {
   "scripts": {
-    "test": "cross-env MODE=test npm run build && karma start",
-    "ci": "cross-env KARMA_REPORTER=teamcity MODE=test npm run build && karma start"
+    "test": "cross-env MODE=test webpack -d --progress && karma start",
+    "ci": "cross-env KARMA_REPORTER=teamcity MODE=test webpack -d --progress && karma start"
   },
   "devDependencies": {
     "webpack-angularity-solution": "latest"
