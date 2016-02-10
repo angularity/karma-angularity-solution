@@ -1,6 +1,6 @@
 {
   "name": "karma-angularity-solution",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Requisite configuration and modules to test Angularity projects with Karma",
   "main": "index.js",
   "repository": {

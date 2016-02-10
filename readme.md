@@ -123,7 +123,7 @@ For example:
 
 #### Environment variables
 
-All settings may be parsed from uppercase environment variables. For example, to **supress logging** during the test:
+All settings may be parsed from uppercase environment variables. For example, to **suppress logging** during the test:
 
 ```json
 {
