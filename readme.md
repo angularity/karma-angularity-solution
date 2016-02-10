@@ -116,4 +116,20 @@ For example:
 
 * `browser:string` Optional browser, or Array thereof (defaults to `"Chrome"`)
 
-* `logLevel:string` Optional log-level (defaults to `"LOG_INFO"`)
+* `logLevel:string` Optional log-level (defaults to `"LOG_INFO"`).
+ 
+	Legal values include `"LOG_DISABLE"`|`"LOG_ERROR"`|`"LOG_WARN"`|`"LOG_INDO"`|`"LOG_DEBUG"`.
+
+
+#### Environment variables
+
+All settings may be parsed from uppercase environment variables. For example, to **supress logging** during the test:
+
+```json
+{
+  "scripts": {
+    "silent": "cross-env LOG_LEVEL=LOG_DISABLE MODE=test webpack -d --progress && karma start"
+	...
+  }
+}
+```
