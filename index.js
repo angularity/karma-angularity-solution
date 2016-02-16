@@ -22,13 +22,13 @@ function configFactory(options) {
   // legacy support
   //  where angularity.json is present it should define the port
   var angularityJsonPath = path.resolve('angularity.json'),
-      angularityPort     = fs.existsSync(angularityJsonPath) && require(angularityJsonPath).port;
+      angularityPort     = fs.existsSync(angularityJsonPath) && (require(angularityJsonPath).port + 1) || undefined;
 
   // options set
   var args = Array.prototype.slice.call(arguments),
       opt  = parseOptions(
-        defaults.apply(null, [{}].concat(args)),                // merged options in
-        defaults({port: angularityPort + 1}, defaultOptions())  // merged defaults
+        defaults.apply(null, [{}].concat(args)),            // merged options in
+        defaults({port: angularityPort}, defaultOptions())  // merged defaults
       );
 
   return function configuration(config) {
