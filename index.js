@@ -4,13 +4,14 @@
 /* globals autoWatch:true, browsers:true, captureTimeout:true, singleRun:true, reportSlowerThan:true */
 /* globals LOG_DISABLE, LOG_ERROR, LOG_WARN, LOG_INFO, LOG_DEBUG */
 
-var path = require('path'),
-    fs   = require('fs');
+const DEFAULT_OPTIONS = {
+  port    : 55556,
+  reporter: 'spec',
+  browser : 'Chrome',
+  logLevel: 'LOG_INFO'
+};
 
-var defaults = require('lodash.defaults');
-
-var defaultOptions = require('./lib/default-options'),
-    parseOptions   = require('./lib/parse-options');
+var merge = require('merge-env');
 
 /**
  * Create a Karma configuration function.
@@ -19,20 +20,13 @@ var defaultOptions = require('./lib/default-options'),
  */
 function configFactory(options) {
 
-  // legacy support
-  //  where angularity.json is present it should define the port
-  var angularityJsonPath = path.resolve('angularity.json'),
-      angularityPort     = fs.existsSync(angularityJsonPath) && (require(angularityJsonPath).port + 1) || undefined;
-
-  // options set
-  var args = Array.prototype.slice.call(arguments),
-      opt  = parseOptions(
-        defaults.apply(null, [{}].concat(args)),            // merged options in
-        defaults({port: angularityPort}, defaultOptions())  // merged defaults
-      );
+  // merge options
+  var args = Array.prototype.slice.call(arguments);
+  options = merge.apply(null, [{}, DEFAULT_OPTIONS].concat(args));
 
   return function configuration(config) {
     config.set({
+
       // base path, that will be used to resolve files and exclude
       basePath: process.cwd(),
 
@@ -60,21 +54,21 @@ function configFactory(options) {
           require('karma-spec-reporter'),
           require('karma-teamcity-reporter'),
           require('karma-jasmine')
-        ),
+        ).concat(options.plugins),
 
       // use dots reporter, as travis terminal does not support escaping sequences
       // possible values: 'dots', 'progress', 'junit', 'teamcity'
-      reporters: [].concat(opt.reporter),
+      reporters: [].concat(options.reporter),
 
       // web server port
-      port: opt.port,
+      port: options.port,
 
       // enable / disable colors in the output (reporters and logs)
       colors: true,
 
       // level of logging
       // possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
-      logLevel: config[opt.logLevel],
+      logLevel: config[options.logLevel],
 
       // enable / disable watching file and executing tests whenever any file changes
       autoWatch: false,
@@ -87,7 +81,7 @@ function configFactory(options) {
       // - Safari (only Mac)
       // - PhantomJS
       // - IE (only Windows)
-      browsers: [].concat(opt.browser),
+      browsers: [].concat(options.browser),
 
       // If browser does not capture in given timeout [ms], kill it
       captureTimeout: 20000,
