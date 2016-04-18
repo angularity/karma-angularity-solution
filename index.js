@@ -8,7 +8,9 @@ const DEFAULT_OPTIONS = {
   port    : 55556,
   reporter: 'spec',
   browser : 'Chrome',
-  logLevel: 'LOG_INFO'
+  logLevel: 'LOG_INFO',
+  watch   : false,
+  timeout : 5000
 };
 
 var merge = require('merge-env');
@@ -34,17 +36,16 @@ function configFactory(options) {
       frameworks: ['jasmine'],
 
       // list of files / patterns to load in the browser
-      // angularity will package unit tests and append to the `files` array
       files: [
-        './app-test/vendor.*.js',
-        './app-test/test.*.js'
+        './app-test/vendor.*',
+        './app-test/test.*'
       ],
 
       // list of files to exclude
-      exclude: [],
+      exclude: [
+        '**/*.map'
+      ],
 
-      // register any plugins which are not siblings of karma in angularity global
-      // installation and thus need to be registered manually
       // append to existing value to preserve plugins loaded automatically
       plugins: []
         .concat(config.plugins)
@@ -54,7 +55,9 @@ function configFactory(options) {
           require('karma-spec-reporter'),
           require('karma-teamcity-reporter'),
           require('karma-jasmine')
-        ).concat(options.plugins),
+        )
+        .concat(options.plugins)
+        .filter(Boolean),
 
       // use dots reporter, as travis terminal does not support escaping sequences
       // possible values: 'dots', 'progress', 'junit', 'teamcity'
@@ -71,7 +74,10 @@ function configFactory(options) {
       logLevel: config[options.logLevel],
 
       // enable / disable watching file and executing tests whenever any file changes
-      autoWatch: false,
+      autoWatch: !!options.watch,
+
+      // batch multiple changes into a single run
+      autoWatchBatchDelay: 1000,
 
       // Start these browsers, currently available:
       // - Chrome
@@ -87,13 +93,12 @@ function configFactory(options) {
       captureTimeout: 20000,
 
       // Auto run tests on start (when browsers are captured) and exit
-      singleRun: true,
+      singleRun: !options.watch,
 
       // report which specs are slower than 500ms
-      reportSlowerThan: 500
+      reportSlowerThan: options.timeout
     });
   };
 }
 
 module.exports = configFactory;
-
