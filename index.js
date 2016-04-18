@@ -9,8 +9,7 @@ const DEFAULT_OPTIONS = {
   reporter: 'spec',
   browser : 'Chrome',
   logLevel: 'LOG_INFO',
-  watch   : false,
-  timeout : 5000
+  watch   : false
 };
 
 var merge = require('merge-env');
@@ -89,14 +88,17 @@ function configFactory(options) {
       // - IE (only Windows)
       browsers: [].concat(options.browser),
 
+      // How long will Karma wait for a message from a browser before disconnecting from it (in ms)
+      browserNoActivityTimeout: 20000,
+
       // If browser does not capture in given timeout [ms], kill it
       captureTimeout: 20000,
 
       // Auto run tests on start (when browsers are captured) and exit
       singleRun: !options.watch,
 
-      // report which specs are slower than 500ms
-      reportSlowerThan: options.timeout
+      // report which specs are slow
+      reportSlowerThan: 0
     });
   };
 }
