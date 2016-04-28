@@ -1,18 +1,19 @@
 'use strict';
 
-/* globals basePath:true, files:true, exclude:true, reporters:true, port:true, colors:true, config:true */
-/* globals autoWatch:true, browsers:true, captureTimeout:true, singleRun:true, reportSlowerThan:true */
-/* globals LOG_DISABLE, LOG_ERROR, LOG_WARN, LOG_INFO, LOG_DEBUG */
-
 const DEFAULT_OPTIONS = {
-  port    : 55556,
-  reporter: 'spec',
-  browser : 'Chrome',
-  logLevel: 'LOG_INFO',
-  watch   : false
+  port      : 55556,
+  reporter  : 'spec',
+  browser   : 'Chrome',
+  logLevel  : 'LOG_INFO',
+  watch     : false,
+  buildDir  : './app-build',
+  testDir   : './app-test',
+  releaseDir: './app-release'
 };
 
 var merge = require('merge-env');
+
+var getDirectoriesExcluding = require('./lib/get-directories-excluding');
 
 /**
  * Create a Karma configuration function.
@@ -25,6 +26,16 @@ function configFactory(options) {
   var args = Array.prototype.slice.call(arguments);
   options = merge.apply(null, [{}, DEFAULT_OPTIONS].concat(args));
 
+  // make a glob prefix of all directories that sources may exist in
+  var directoryList    = getDirectoriesExcluding([
+        'node_modules',
+        'bower_components',
+        options.buildDir,
+        options.testDir,
+        options.releaseDir
+      ]),
+      directoryPattern = '{' + directoryList.join(',') + '}';
+
   return function configuration(config) {
     config.set({
 
@@ -36,20 +47,34 @@ function configFactory(options) {
 
       // list of files / patterns to load in the browser
       files: [
-        './app-test/vendor.*',
-        './app-test/test.*'
+        {
+          pattern : './app-test/vendor*.js',
+          included: true,
+          watched : true
+        }, {
+          pattern : './app-test/test*.js',
+          included: true,
+          watched : true
+        }, {
+          pattern : './app-test/{test,vendor}*.js.map',
+          watched : false,
+          included: false
+        }, {
+          pattern : './' + directoryPattern + '/**/*.js',
+          watched : false,
+          included: false
+        }
       ],
 
-      // list of files to exclude
-      exclude: [
-        '**/*.map'
-      ],
+      preprocessors: {
+        '**/*.js.map': ['generic']
+      },
 
       // append to existing value to preserve plugins loaded automatically
       plugins: []
         .concat(config.plugins)
         .concat(
-          require('karma-sourcemap-loader'),
+          require('karma-generic-preprocessor'),
           require('karma-chrome-launcher'),
           require('karma-spec-reporter'),
           require('karma-teamcity-reporter'),
@@ -98,7 +123,30 @@ function configFactory(options) {
       singleRun: !options.watch,
 
       // report which specs are slow
-      reportSlowerThan: 0
+      reportSlowerThan: 0,
+
+      // adjust sourcemaps
+      genericPreprocessor: {
+        rules: [{
+          process: function (content, file, done, log) {
+
+            // parse existing source-map
+            try {
+              var json = JSON.parse(content);
+            } catch (exception) {
+              log.error('file ' + file + ' is not a valid sourcemap');
+            }
+
+            // remove sourcesContent, apply a sourceRoot
+            delete json.sourcesContent;
+            json.sourceRoot = '/base';
+            var text = JSON.stringify(json, null, 2);
+
+            // complete
+            done(text);
+          }
+        }]
+      }
     });
   };
 }
